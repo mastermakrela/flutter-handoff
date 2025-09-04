@@ -32,6 +32,26 @@ or App Switcher
 
 To hide the handoff icon, you can call `Handoff.clearHandoff()`.
 
+## Automatic Handoff with Route Navigation
+
+For even easier use, you can use `HandoffPageRoute` which automatically sets the handoff URL when the route is entered and clears it when the route is exited:
+
+```dart
+import 'package:handoff/handoff.dart';
+
+void navigateToPage() {
+  Navigator.of(context).push(
+    HandoffPageRoute<void>(
+      handoffUrl: "https://example.com/some/path",
+      handoffTitle: "Some Title", // Optional
+      builder: (context) => MyPageWidget(),
+    ),
+  );
+}
+```
+
+This eliminates the need to manually call `setHandoffUrl()` and `clearHandoff()` - the route handles it automatically!
+
 ## Available methods
 
 | Method                                       | Description                                                  |
@@ -39,3 +59,9 @@ To hide the handoff icon, you can call `Handoff.clearHandoff()`.
 | `setHandoffUrl(String url, {String? title})` | Sets a handoff URL using a string URL with an optional title |
 | `setHandoffUri(Uri uri, {String? title})`    | Sets a handoff URL using a Uri object with an optional title |
 | `clearHandoff()`                             | Clears the current handoff activity                          |
+
+## Available classes
+
+| Class                     | Description                                                                                         |
+| ------------------------- | --------------------------------------------------------------------------------------------------- |
+| `HandoffPageRoute<T>`     | A MaterialPageRoute subclass that automatically manages handoff URLs on route enter/exit          |
