@@ -4,13 +4,13 @@ version: 0.2.0
 homepage: https://github.com/mastermakrela/flutter-handoff
 
 environment:
-  sdk: ^3.9.0
-  flutter: ">=3.27.0"
+  sdk: ^3.5.0
+  flutter: ">=3.22.0"
 
 dependencies:
   flutter:
     sdk: flutter
-  plugin_platform_interface: ^2.1.0
+  plugin_platform_interface: ^2.0.2
 
 dev_dependencies:
   flutter_test:
