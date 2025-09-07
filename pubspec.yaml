@@ -1,6 +1,6 @@
 name: handoff
 description: "A Flutter plugin for Apple's Handoff functionality."
-version: 0.1.0
+version: 0.2.0
 homepage: https://github.com/mastermakrela/flutter-handoff
 
 environment:

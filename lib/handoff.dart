@@ -83,21 +83,23 @@ class HandoffPageRoute<T> extends MaterialPageRoute<T> {
   });
 
   @override
-  void didPush() {
-    super.didPush();
+  TickerFuture didPush() {
+    final future = super.didPush();
+    _setHandoffUrl();
+    return future;
+  }
+
+  @override
+  void didPopNext(Route<dynamic> nextRoute) {
+    super.didPopNext(nextRoute);
     _setHandoffUrl();
   }
 
   @override
-  void didPopNext() {
-    super.didPopNext();
-    _setHandoffUrl();
-  }
-
-  @override
-  void didPop(T? result) {
-    super.didPop(result);
+  bool didPop(T? result) {
+    final didPop = super.didPop(result);
     _clearHandoff();
+    return didPop;
   }
 
   @override
