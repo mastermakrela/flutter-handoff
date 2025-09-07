@@ -66,7 +66,7 @@ class Handoff {
 class HandoffPageRoute<T> extends MaterialPageRoute<T> {
   /// The URL to set for handoff when this route is active.
   final String handoffUrl;
-  
+
   /// Optional title for the handoff activity.
   final String? handoffTitle;
 
