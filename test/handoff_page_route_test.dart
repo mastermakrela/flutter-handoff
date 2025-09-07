@@ -25,7 +25,8 @@ void main() {
       expect(route.handoffTitle, equals('Example Title'));
     });
 
-    testWidgets('should create route with all MaterialPageRoute parameters', (tester) async {
+    testWidgets('should create route with all MaterialPageRoute parameters',
+        (tester) async {
       const settings = RouteSettings(name: '/test');
       final route = HandoffPageRoute<void>(
         handoffUrl: 'https://example.com',

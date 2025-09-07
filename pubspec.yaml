@@ -1,11 +1,11 @@
 name: handoff
 description: "A Flutter plugin for Apple's Handoff functionality."
-version: 0.1.0
+version: 0.2.0
 homepage: https://github.com/mastermakrela/flutter-handoff
 
 environment:
-  sdk: ^3.8.1
-  flutter: ">=3.3.0"
+  sdk: ^3.5.0
+  flutter: ">=3.22.0"
 
 dependencies:
   flutter:
