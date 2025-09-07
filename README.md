@@ -65,3 +65,23 @@ This eliminates the need to manually call `setHandoffUrl()` and `clearHandoff()`
 | Class                     | Description                                                                                         |
 | ------------------------- | --------------------------------------------------------------------------------------------------- |
 | `HandoffPageRoute<T>`     | A MaterialPageRoute subclass that automatically manages handoff URLs on route enter/exit          |
+
+## Development
+
+### Automated Publishing
+
+This package uses automated publishing to pub.dev. When a new tag is pushed to the main branch (in the format `vX.Y.Z`), a GitHub Action will:
+
+1. Run tests and validation
+2. Extract the version from the tag
+3. Parse the corresponding entry from CHANGELOG.md  
+4. Create a GitHub release with the changelog notes
+5. Publish the package to pub.dev
+
+To release a new version:
+1. Update the version in `pubspec.yaml`
+2. Add an entry to `CHANGELOG.md` with the same version number
+3. Commit the changes to main
+4. Create and push a tag: `git tag v1.0.0 && git push origin v1.0.0`
+
+The publishing process requires the `PUB_TOKEN` secret to be configured in the repository settings.

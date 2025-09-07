@@ -1,0 +1,98 @@
+name: Publish to pub.dev
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  publish:
+    name: Publish Package
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.24.0'
+          cache: true
+          
+      - name: Get dependencies
+        run: flutter pub get
+        
+      - name: Verify formatting
+        run: dart format --output=none --set-exit-if-changed .
+        
+      - name: Analyze project source
+        run: dart analyze --fatal-infos
+        
+      - name: Run tests
+        run: flutter test
+        
+      - name: Extract version from tag
+        id: get_version
+        run: |
+          TAG=${GITHUB_REF#refs/tags/}
+          VERSION=${TAG#v}
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
+          
+      - name: Verify version in pubspec.yaml
+        run: |
+          EXPECTED_VERSION="${{ steps.get_version.outputs.version }}"
+          PUBSPEC_VERSION=$(grep '^version:' pubspec.yaml | sed 's/version: *//')
+          if [ "$PUBSPEC_VERSION" != "$EXPECTED_VERSION" ]; then
+            echo "Error: pubspec.yaml version ($PUBSPEC_VERSION) does not match tag version ($EXPECTED_VERSION)"
+            exit 1
+          fi
+          echo "Version verified: $EXPECTED_VERSION"
+          
+      - name: Extract changelog entry
+        id: get_changelog
+        run: |
+          VERSION="${{ steps.get_version.outputs.version }}"
+          # Extract the changelog entry for this version
+          CHANGELOG_ENTRY=$(awk -v version="$VERSION" '
+          /^## / {
+            if ($0 ~ version) {
+              found = 1;
+              next;
+            } else if (found) {
+              exit;
+            }
+          }
+          found && /^$/ { next }
+          found { print }
+          ' CHANGELOG.md)
+          
+          if [ -z "$CHANGELOG_ENTRY" ]; then
+            echo "No changelog entry found for version $VERSION"
+            CHANGELOG_ENTRY="Release $VERSION"
+          fi
+          
+          # Save changelog entry to output
+          echo "entry<<EOF" >> $GITHUB_OUTPUT
+          echo "$CHANGELOG_ENTRY" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+          
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.get_version.outputs.tag }}
+          name: Release ${{ steps.get_version.outputs.tag }}
+          body: ${{ steps.get_changelog.outputs.entry }}
+          draft: false
+          prerelease: false
+          
+      - name: Setup pub credentials
+        run: |
+          mkdir -p $HOME/.config/dart
+          echo '${{ secrets.PUB_TOKEN }}' > $HOME/.config/dart/pub-token.json
+          
+      - name: Publish to pub.dev
+        run: flutter pub publish --force
